@@ -1,15 +1,27 @@
-objects = array.o array1.o
+csrc=memmov.c
+cxxsrc=wrap-enum.cpp
+cobjects = $(csrc:%.c=%.o) 
+cppobjects = $(cxxsrc:%.cpp=%.o)
+
+#$(warning $(csrc))
+#$(warning $(cxxsrc))
+#$(warning $(cobjects))
+#$(warning $(cppobjects))
 CC = gcc
 CXX = g++
 CFLAGS = -g
-all: array array1
-array1: array1.o
-	$(CC) -g -o array1 $<
-array: array.o
-	$(CC) -g -o array $<
-$(objects): %.o:%.c
-	$(CC) -c $(CFLAGS) $< -o $@
+all: memmov wrap-enum
+memmov: memmov.o
+	$(CC) -g -o memmov $<
+wrap-enum: wrap-enum.o
+	$(CXX) -g -o wrap-enum $<
+$(cobjects):%.o:%.c
+	$(CC) -g -c $<
+$(cppobjects):%.o:%.cpp
+	$(CXX) -g -c $<
+	
+
 .PHONY: clean all
 clean:
-	@rm array array1 $(objects) 
+	-rm *.o memmov wrap-enum
 
