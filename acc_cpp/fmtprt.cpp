@@ -5,16 +5,14 @@ int main() {
 
     cout<< "Please input your name: " << endl;
     cin >> name;
-    string greeting = "Hello " + name;
-    string second(greeting.size(), ' ');
-    string first(greeting.size() + 4, '*');
-
-    second = "* " + second + " *";
-    greeting = "* " + greeting + " *";
+    const string greeting = "Hello " + name + "!";
+    const string spaces(greeting.size(), ' ');
+    const string second = "* " + spaces + " *";
+    const string first(second.size(), '*');
 
     cout << first << endl;
     cout << second << endl;
-    cout << greeting << endl;
+    cout << "* " << greeting << " *" << endl;
     cout << second << endl;
     cout << first << endl;
 
