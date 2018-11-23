@@ -9,6 +9,29 @@
 #include <cstdlib>
 #include <ctime> // std::time(), returns number of seconds simce midnight on Jan 1, 1970.
 
+/*
+ * source code comes from:
+ * https://www.learncpp.com/cpp-tutorial/59-random-number-generation/
+ * 
+ * */
+
+/*
+ * std::rand() is a mediocre PRNG
+ * algorithm used to implement std::rand() can vary from compiler to compiler.
+ * most implementations of rand() use a method called a Linear Congruential Generator - LCG
+ * https://en.wikipedia.org/wiki/Linear_congruential_generator
+ * Defects:
+ * - essentially 15-bits, RAND_MAX (32767). not suitable over a larger range (32-bit)
+ * - high-quality PRNG is Mersenne Twister http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/emt.html
+ * - after calling srand(), call rand() once and discard the first result to avoid this issue 
+ */
+
+/*
+ * C++11 added a ton of random number PRNG into C++ standard library
+ * including the Mersenne Twister algorithm
+ * this is accessed via <random> header.
+ */
+
 int always_same() {
     // in order to make our entire sequence randomized, we need some way to pick a seed that's
     // not a fixed number.
