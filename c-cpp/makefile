@@ -1,5 +1,5 @@
 csrc=memmov.c
-cxxsrc=wrap-enum.cpp
+cxxsrc=wrap-enum.cpp genrandom.cpp
 cobjects = $(csrc:%.c=%.o) 
 cppobjects = $(cxxsrc:%.cpp=%.o)
 
@@ -10,11 +10,13 @@ cppobjects = $(cxxsrc:%.cpp=%.o)
 CC = gcc
 CXX = g++
 CFLAGS = -g
-all: memmov wrap-enum
+all: memmov wrap-enum genran
 memmov: memmov.o
-	$(CC) -g -o memmov $<
+	$(CC) $(CFLAGS) -o memmov $<
 wrap-enum: wrap-enum.o
-	$(CXX) -g -o wrap-enum $<
+	$(CXX) $(CFLAGS) -o wrap-enum $<
+genran: genrandom.o 
+	$(CXX) $(CFLAGS) -o genran $<
 $(cobjects):%.o:%.c
 	$(CC) -g -c $<
 $(cppobjects):%.o:%.cpp
@@ -23,5 +25,5 @@ $(cppobjects):%.o:%.cpp
 
 .PHONY: clean all
 clean:
-	-rm *.o memmov wrap-enum
+	-rm *.o memmov wrap-enum genran
 
