@@ -40,7 +40,7 @@ int always_same() {
 }
 
 int not_same() {
-    std::srand(static_cast<unsigned int>(std::time(nullptr)));
+    std::srand(static_cast<unsigned int>(std::time(NULL)));
     return 0;
 }
 int main() {
