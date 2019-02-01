@@ -24,8 +24,14 @@ $(cobjects):%.o:%.c
 $(cppobjects):%.o:%.cpp
 	$(CXX) -g -c $<
 	
+%.o: %.c
+	@echo "compiling [$*]"
+	$(CC) $(CFLAGS) -o $@ -c $<
+%.o: %.cpp
+	@echo "compiling c++ [$*]"
+	$(CXX) $(CFLAGS) -o $@ -c $<
 
-.PHONY: clean all
+.PHONY: all clean
 clean:
 	-rm *.o memmov wrap-enum genran refofarr
 

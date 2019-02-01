@@ -1,5 +1,5 @@
 #csrc=xxx.c
-cxxsrc=fmtprt.cpp
+cxxsrc=$(wildcard *.cpp)
 #cobjects = $(csrc:%.c=%.o) 
 cppobjects = $(cxxsrc:%.cpp=%.o)
 
