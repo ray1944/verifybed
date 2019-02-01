@@ -44,7 +44,7 @@ int not_same() {
     return 0;
 }
 int main() {
-    always_same();
+    not_same();
     //not_same()
     for (int count = 1; count <= 100; ++count) {
         std::cout << std::rand() << "\t";
