@@ -1,1 +1,6 @@
 *.o
+c-cpp/wrap-enum
+c-cpp/genran
+c-cpp/memmov
+c-cpp/refofarr
+c-cpp/t
