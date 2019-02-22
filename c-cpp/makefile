@@ -1,5 +1,5 @@
 csrc=memmov.c
-cxxsrc=wrap-enum.cpp genrandom.cpp refofarr.cpp
+cxxsrc=wrap-enum.cpp genrandom.cpp refofarr.cpp objincontainer.cpp
 cobjects = $(csrc:%.c=%.o) 
 cppobjects = $(cxxsrc:%.cpp=%.o)
 
@@ -10,7 +10,7 @@ cppobjects = $(cxxsrc:%.cpp=%.o)
 CC = gcc
 CXX = g++
 CFLAGS = -g
-all: memmov wrap-enum genran refofarr
+all: memmov wrap-enum genran refofarr objincon
 memmov: memmov.o
 	$(CC) $(CFLAGS) -o memmov $<
 wrap-enum: wrap-enum.o
@@ -19,6 +19,8 @@ genran: genrandom.o
 	$(CXX) $(CFLAGS) -o genran $<
 refofarr: refofarr.o
 	$(CXX) $(CFLAGS) -o refofarr $<
+objincon: objincontainer.o
+	$(CXX) $(CFLAGS) -o objincon $<
 $(cobjects):%.o:%.c
 	$(CC) -g -c $<
 $(cppobjects):%.o:%.cpp
