@@ -1,8 +1,10 @@
 #include <iostream>
 #include <time.h>
 
-using namespace std;
-void weatherForcast(char * w="rainy") {
+using std::string;
+using std::cout;
+using std::endl;
+void weatherForcast(const string& w="rainy") {
     time_t  t = time(0);
     char tmp[64];
     strftime(tmp, sizeof(tmp), "%Y/%m/%d %X %A ",localtime(&t));
