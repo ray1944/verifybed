@@ -11,7 +11,7 @@ cppobjects = $(cxxsrc:%.cpp=%.o)
 CC = gcc
 CXX = g++
 CFLAGS = -g
-PGMs=memmov wrap-enum genran refofarr objincon iobasic
+PGMs=memmov wrap-enum genran refofarr objincon iobasic cpp_basics1
 all: $(PGMs)
 
 memmov: memmov.o
@@ -25,6 +25,8 @@ refofarr: refofarr.o
 objincon: objincontainer.o
 	$(CXX) $(CFLAGS) -o objincon $<
 iobasic: iobasic.o
+	$(CXX) $(CFLAGS) -o $@ $<
+cpp_basics1: cpp_basics1.o
 	$(CXX) $(CFLAGS) -o $@ $<
 $(cobjects):%.o:%.c
 	$(CC) -g -c $<
