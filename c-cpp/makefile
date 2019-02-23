@@ -1,5 +1,6 @@
-csrc=memmov.c
-cxxsrc=wrap-enum.cpp genrandom.cpp refofarr.cpp objincontainer.cpp
+csrc=$(wildcard *.c)
+# cxxsrc=wrap-enum.cpp genrandom.cpp refofarr.cpp objincontainer.cpp
+cxxsrc=$(wildcard *.cpp)
 cobjects = $(csrc:%.c=%.o) 
 cppobjects = $(cxxsrc:%.cpp=%.o)
 
@@ -10,7 +11,9 @@ cppobjects = $(cxxsrc:%.cpp=%.o)
 CC = gcc
 CXX = g++
 CFLAGS = -g
-all: memmov wrap-enum genran refofarr objincon
+PGMs=memmov wrap-enum genran refofarr objincon
+all: $(PGMs)
+
 memmov: memmov.o
 	$(CC) $(CFLAGS) -o memmov $<
 wrap-enum: wrap-enum.o
@@ -26,14 +29,14 @@ $(cobjects):%.o:%.c
 $(cppobjects):%.o:%.cpp
 	$(CXX) -g -c $<
 	
-%.o: %.c
-	@echo "compiling [$*]"
-	$(CC) $(CFLAGS) -o $@ -c $<
-%.o: %.cpp
-	@echo "compiling c++ [$*]"
-	$(CXX) $(CFLAGS) -o $@ -c $<
+#%.o: %.c
+#	@echo "compiling [$*]"
+#	$(CC) $(CFLAGS) -o $@ -c $<
+#%.o: %.cpp
+#	@echo "compiling c++ [$*]"
+#	$(CXX) $(CFLAGS) -o $@ -c $<
 
 .PHONY: all clean
 clean:
-	-rm *.o memmov wrap-enum genran refofarr
+	-@rm *.o $(PGMs)
 
