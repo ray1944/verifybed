@@ -1,4 +1,5 @@
 *.o
+*.exe
 c-cpp/wrap-enum
 c-cpp/genran
 c-cpp/memmov
