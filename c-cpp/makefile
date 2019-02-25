@@ -11,7 +11,7 @@ cppobjects = $(cxxsrc:%.cpp=%.o)
 CC = gcc
 CXX = g++
 CFLAGS = -g
-PGMs=memmov wrap-enum genran refofarr objincon iobasic cpp_basics1
+PGMs=memmov wrap-enum genran refofarr objincon iobasic cpp_basics1 
 all: $(PGMs)
 
 memmov: memmov.o
@@ -28,6 +28,8 @@ iobasic: iobasic.o
 	$(CXX) $(CFLAGS) -o $@ $<
 cpp_basics1: cpp_basics1.o
 	$(CXX) $(CFLAGS) -o $@ $<
+# strlval: strlvalue.o
+# 	$(CXX) $(CFLAGS) -o $@ $<
 $(cobjects):%.o:%.c
 	$(CC) -g -c $<
 $(cppobjects):%.o:%.cpp
@@ -42,5 +44,5 @@ $(cppobjects):%.o:%.cpp
 
 .PHONY: all clean
 clean:
-	-@rm *.o $(PGMs)
+	-@rm -f *.o $(PGMs)
 
