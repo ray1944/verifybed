@@ -1,6 +1,6 @@
-#csrc=xxx.c
+csrc=$(wildcard *.c)
 cxxsrc=$(wildcard *.cpp)
-#cobjects = $(csrc:%.c=%.o) 
+cobjects = $(csrc:%.c=%.o) 
 cppobjects = $(cxxsrc:%.cpp=%.o)
 
 #$(warning $(csrc))
@@ -9,18 +9,25 @@ cppobjects = $(cxxsrc:%.cpp=%.o)
 #$(warning $(cppobjects))
 CC = gcc
 CXX = g++
-CFLAGS = -g
-all: fmtprt 
+CFLAGS := -g
+CXXFLAGS := -g
+PGMs=fmtprt practice1
+all: $(PGMs)
+
 fmtprt: fmtprt.o
-	$(CXX) -g -o fmtprt $<
+	$(CXX) -o $@ $<
+practice1: practice1.o 
+	$(CXX) -o $@ $<
 
-#$(cobjects):%.o:%.c
-#	$(CC) -g -c $<
+
+# strlval: strlvalue.o
+# 	$(CXX) $(CFLAGS) -o $@ $<
+$(cobjects):%.o:%.c
+	$(CC) $(CFLAGS) -c $<
 $(cppobjects):%.o:%.cpp
-	$(CXX) -g -c $<
-	
+	$(CXX) $(CXXFLAGS) -c $<
 
-.PHONY: clean all
+.PHONY: all clean
 clean:
-	-rm *.o fmtprt
+	-@rm -f *.o $(PGMs)
 
