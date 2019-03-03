@@ -33,6 +33,7 @@ int main(int argc, const char* argv[]) {
     cout << "sz_t: " << s << endl;
     cout <<"size_t: "<< sz << endl;
 
+    //保存 cout 的 precision 值以便恢复
     const streamsize prec = cout.precision();
     cout << "You find grade is " << setprecision(5) << 98.12345 
          << setprecision(prec) << " " << 98.123456 << endl;
