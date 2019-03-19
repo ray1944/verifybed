@@ -35,7 +35,7 @@ int main(int argc, const char* argv[]) {
 
     for (it = tst.begin(); it != tst.end(); ) {
         if (it->first == "name1") {
-            it = tst.erase(it);
+            tst.erase(it++);
         } else {
             ++it;
         }
