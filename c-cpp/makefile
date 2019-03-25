@@ -11,7 +11,7 @@ cppobjects = $(cxxsrc:%.cpp=%.o)
 CC = gcc
 CXX = g++
 CFLAGS = -g
-PGMs=memmov wrap-enum genran refofarr objincon iobasic cpp_basics1 map_basic1 findinmap refaddr
+PGMs=memmov wrap-enum genran refofarr objincon iobasic cpp_basics1 map_basic1 findinmap refaddr constmemfunc
 all: $(PGMs)
 
 memmov: memmov.o
@@ -34,7 +34,8 @@ findinmap: findinmap.o
 	$(CXX) $(CFLAGS) -o $@ $<
 refaddr: refaddr.o
 	$(CXX) $(CFLAGS) -o $@ $<
-
+constmemfunc: constmemfunc.o
+	$(CXX) $(CFLAGS) -o $@ $<
 
 # strlval: strlvalue.o
 # 	$(CXX) $(CFLAGS) -o $@ $<
