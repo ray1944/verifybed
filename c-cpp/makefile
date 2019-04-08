@@ -8,46 +8,50 @@ cppobjects = $(cxxsrc:%.cpp=%.o)
 #$(warning $(cxxsrc))
 #$(warning $(cobjects))
 #$(warning $(cppobjects))
+BOOST_INCLUDE = /Users/ray1944/workspace/aldon/src/boost_1_55/
 CC = gcc
 CXX = g++
-CFLAGS = -g
+CFLAGS = -g -I$(BOOST_INCLUDE)
+CXXFLAGS = -g
 PGMs=memmov wrap-enum genran refofarr objincon iobasic cpp_basics1 map_basic1 \
-     findinmap refaddr constmemfunc rvsitr rvsitr1
+     findinmap refaddr constmemfunc rvsitr rvsitr1 num_str
 all: $(PGMs)
 
 memmov: memmov.o
-	$(CC) $(CFLAGS) -o memmov $<
+	$(CC) $(CXXFLAGS) -o memmov $<
 wrap-enum: wrap-enum.o
-	$(CXX) $(CFLAGS) -o wrap-enum $<
+	$(CXX) $(CXXFLAGS) -o wrap-enum $<
 genran: genrandom.o 
-	$(CXX) $(CFLAGS) -o genran $<
+	$(CXX) $(CXXFLAGS) -o genran $<
 refofarr: refofarr.o
-	$(CXX) $(CFLAGS) -o refofarr $<
+	$(CXX) $(CXXFLAGS) -o refofarr $<
 objincon: objincontainer.o
-	$(CXX) $(CFLAGS) -o objincon $<
+	$(CXX) $(CXXFLAGS) -o objincon $<
 iobasic: iobasic.o
-	$(CXX) $(CFLAGS) -o $@ $<
+	$(CXX) $(CXXFLAGS) -o $@ $<
 cpp_basics1: cpp_basics1.o
-	$(CXX) $(CFLAGS) -o $@ $<
+	$(CXX) $(CXXFLAGS) -o $@ $<
 map_basic1: map_basic1.o 
-	$(CXX) $(CFLAGS) -o $@ $<
+	$(CXX) $(CXXFLAGS) -o $@ $<
 findinmap: findinmap.o
-	$(CXX) $(CFLAGS) -o $@ $<
+	$(CXX) $(CXXFLAGS) -o $@ $<
 refaddr: refaddr.o
-	$(CXX) $(CFLAGS) -o $@ $<
+	$(CXX) $(CXXFLAGS) -o $@ $<
 constmemfunc: constmemfunc.o
-	$(CXX) $(CFLAGS) -o $@ $<
+	$(CXX) $(CXXFLAGS) -o $@ $<
 rvsitr: rvsitr.o
-	$(CXX) $(CFLAGS) -o $@ $<
+	$(CXX) $(CXXFLAGS) -o $@ $<
 rvsitr1: rvsitr1.o
-	$(CXX) $(CFLAGS) -o $@ $<
+	$(CXX) $(CXXFLAGS) -o $@ $<
+num_str: num_str.o
+	$(CXX) $(CXXFLAGS) -o $@ $<
 
 # strlval: strlvalue.o
 # 	$(CXX) $(CFLAGS) -o $@ $<
 $(cobjects):%.o:%.c
-	$(CC) -g -c $<
+	$(CC) $(CFLAGS) -c $<
 $(cppobjects):%.o:%.cpp
-	$(CXX) -g -c $<
+	$(CXX) $(CFLAGS) -c $<
 	
 #%.o: %.c
 #	@echo "compiling [$*]"
