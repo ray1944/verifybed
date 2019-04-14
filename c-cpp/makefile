@@ -15,7 +15,8 @@ CFLAGS = -g -I$(BOOST_INCLUDE)
 CXXFLAGS = -g
 LNKLIBS := 
 PGMs=memmov wrap-enum genran refofarr objincon iobasic cpp_basics1 map_basic1 \
-     findinmap refaddr constmemfunc rvsitr rvsitr1 num_str getsystime
+     findinmap refaddr constmemfunc rvsitr rvsitr1 num_str getsystime stdstream \
+	  inoutiterator
 all: $(PGMs)
 
 memmov: memmov.o
@@ -47,6 +48,10 @@ rvsitr1: rvsitr1.o
 num_str: num_str.o
 	$(CXX) $(CXXFLAGS) -o $@ $<
 getsystime: getsystime.o 
+	$(CXX) $(CXXFLAGS) -o $@ $<
+stdstream: stdstream.o
+	$(CXX) $(CXXFLAGS) -o $@ $<
+inoutiterator: inoutiterator.o
 	$(CXX) $(CXXFLAGS) -o $@ $<
 
 # strlval: strlvalue.o
