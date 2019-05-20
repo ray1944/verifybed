@@ -1,23 +1,25 @@
 #include <iostream>
 #include <string>
 
-using std::string;
 using std::cout;
 using std::endl;
+using std::string;
 
-void foo(int& a) {
-    return;
-}
+void foo(int &a) { return; }
 
-int nonlvalue() {
+int nonlvalue() 
+{
     int a;
-    return a; 
+
+    return a;
 }
-int main(int argc, const char* argv[]) {
+
+int main(int argc, const char *argv[]) 
+{
     int a, b;
 
     a = b = 1;
-    //foo(nonlvalue()); nonlvalue() is non-lvalue
+    // foo(nonlvalue()); nonlvalue() is non-lvalue
 
     return 0;
 }
