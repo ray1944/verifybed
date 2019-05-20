@@ -11,55 +11,60 @@ cppobjects = $(cxxsrc:%.cpp=%.o)
 BOOST_INCLUDE = /Users/ray1944/workspace/aldon/src/boost_1_55/
 CC = gcc
 CXX = g++
-CFLAGS = -g -I$(BOOST_INCLUDE)
-CXXFLAGS = -g
+CFLAGS = -g 
+CXXFLAGS = -g -std=c++11 -Wc++11-extensions -I$(BOOST_INCLUDE) 
+LINKFLAGS = -g 
 LNKLIBS := 
 PGMs=memmov wrap-enum genran refofarr objincon iobasic cpp_basics1 map_basic1 \
      findinmap refaddr constmemfunc rvsitr rvsitr1 num_str getsystime stdstream \
-	  inoutiterator
+	  inoutiterator c11features machinfo
 all: $(PGMs)
 
 memmov: memmov.o
-	$(CC) $(CXXFLAGS) -o memmov $<
+	$(CC) $(LINKFLAGS) -o memmov $<
 wrap-enum: wrap-enum.o
-	$(CXX) $(CXXFLAGS) -o wrap-enum $<
+	$(CXX) $(LINKFLAGS) -o wrap-enum $<
 genran: genrandom.o 
-	$(CXX) $(CXXFLAGS) -o genran $<
+	$(CXX) $(LINKFLAGS) -o genran $<
 refofarr: refofarr.o
-	$(CXX) $(CXXFLAGS) -o refofarr $<
+	$(CXX) $(LINKFLAGS) -o refofarr $<
 objincon: objincontainer.o
-	$(CXX) $(CXXFLAGS) -o objincon $<
+	$(CXX) $(LINKFLAGS) -o objincon $<
 iobasic: iobasic.o
-	$(CXX) $(CXXFLAGS) -o $@ $<
+	$(CXX) $(LINKFLAGS) -o $@ $<
 cpp_basics1: cpp_basics1.o
-	$(CXX) $(CXXFLAGS) -o $@ $<
+	$(CXX) $(LINKFLAGS) -o $@ $<
 map_basic1: map_basic1.o 
-	$(CXX) $(CXXFLAGS) -o $@ $<
+	$(CXX) $(LINKFLAGS) -o $@ $<
 findinmap: findinmap.o
-	$(CXX) $(CXXFLAGS) -o $@ $<
+	$(CXX) $(LINKFLAGS) -o $@ $<
 refaddr: refaddr.o
-	$(CXX) $(CXXFLAGS) -o $@ $<
+	$(CXX) $(LINKFLAGS) -o $@ $<
 constmemfunc: constmemfunc.o
-	$(CXX) $(CXXFLAGS) -o $@ $<
+	$(CXX) $(LINKFLAGS) -o $@ $<
 rvsitr: rvsitr.o
-	$(CXX) $(CXXFLAGS) -o $@ $<
+	$(CXX) $(LINKFLAGS) -o $@ $<
 rvsitr1: rvsitr1.o
-	$(CXX) $(CXXFLAGS) -o $@ $<
+	$(CXX) $(LINKFLAGS) -o $@ $<
 num_str: num_str.o
-	$(CXX) $(CXXFLAGS) -o $@ $<
+	$(CXX) $(LINKFLAGS) -o $@ $<
 getsystime: getsystime.o 
-	$(CXX) $(CXXFLAGS) -o $@ $<
+	$(CXX) $(LINKFLAGS) -o $@ $<
 stdstream: stdstream.o
-	$(CXX) $(CXXFLAGS) -o $@ $<
+	$(CXX) $(LINKFLAGS) -o $@ $<
 inoutiterator: inoutiterator.o
-	$(CXX) $(CXXFLAGS) -o $@ $<
+	$(CXX) $(LINKFLAGS) -o $@ $<
+c11features: c11features.o
+	$(CXX) $(LINKFLAGS) -o $@ $<
+machinfo: checkmachineinfo.o
+	$(CXX) $(LINKFLAGS) -o $@ $<
 
 # strlval: strlvalue.o
 # 	$(CXX) $(CFLAGS) -o $@ $<
 $(cobjects):%.o:%.c
 	$(CC) $(CFLAGS) -c $<
 $(cppobjects):%.o:%.cpp
-	$(CXX) $(CFLAGS) -c $<
+	$(CXX) $(CXXFLAGS) -c $<
 	
 #%.o: %.c
 #	@echo "compiling [$*]"
