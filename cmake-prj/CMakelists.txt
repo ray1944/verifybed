@@ -25,9 +25,9 @@ if (USE_MYMATH)
     set (EXTRA_LIBS ${EXTRA_LIBS} MathFunctions)
 endif (USE_MYMATH)
 
-
-
+add_compile_options(--std=c++11)
 add_executable(Tutorial tutorial.cxx)
+
 target_link_libraries (Tutorial ${EXTRA_LIBS})
 
 #add the install targets
