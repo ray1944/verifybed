@@ -1,6 +1,0 @@
-/Users/ray1944/workspace/learning/verifybed/cmake/CMakeFiles/rebuild_cache.dir
-/Users/ray1944/workspace/learning/verifybed/cmake/CMakeFiles/edit_cache.dir
-/Users/ray1944/workspace/learning/verifybed/cmake/CMakeFiles/Tutorial.dir
-/Users/ray1944/workspace/learning/verifybed/cmake/MathFunctions/CMakeFiles/rebuild_cache.dir
-/Users/ray1944/workspace/learning/verifybed/cmake/MathFunctions/CMakeFiles/edit_cache.dir
-/Users/ray1944/workspace/learning/verifybed/cmake/MathFunctions/CMakeFiles/MathFunctions.dir
