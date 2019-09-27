@@ -89,6 +89,7 @@ int CApp::_processOptions(int argc, const char *argv[])
         .allow_unregistered()
         .run();
     po::store(parsed, _argvm);
+    po::notify(_argvm);
 
     /*
      * Check if command line arguments have unrecognized global options

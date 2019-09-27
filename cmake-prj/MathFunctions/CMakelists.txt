@@ -8,8 +8,6 @@ add_custom_command(
    DEPENDS MakeTable 
 )
 
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
-add_definitions(--std=c++11)
 add_library(MathFunctions mysqrt.cxx ${CMAKE_CURRENT_BINARY_DIR}/Table.h)
 install (TARGETS MathFunctions DESTINATION bin)
 install (FILES MathFunctions.h DESTINATION include)

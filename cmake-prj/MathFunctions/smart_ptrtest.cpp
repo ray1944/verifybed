@@ -17,7 +17,8 @@ public:
 
 void foo() 
 {
-    std::shared_ptr<Base> ptr1(new Base);
+    //std::shared_ptr<Base> ptr1(new Base);
+
 }
 
 int main()
