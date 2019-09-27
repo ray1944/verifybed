@@ -74,6 +74,7 @@ int main(int argc, const char* argv[]) {
         cout << cobjit->first << endl;
     }
     string end;
+    cout << std::hex << 10 << endl;
     cin >> end;
 
     return 0;

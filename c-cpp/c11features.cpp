@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <stdio.h>
 using namespace std;
 
 void rvalueref() 
@@ -8,9 +9,6 @@ void rvalueref()
     int &r = i;
     
 }
-
-
-
 
 int main(int argc, const char *argv[]) 
 {
@@ -22,6 +20,8 @@ int main(int argc, const char *argv[])
     vector<int> iv;
     auto itr = iv.begin();
     cout << typeid(itr).name() << endl; //typeid是 RTTI，影响性能，可访问 type_info
+
+    printf("%-10s/%-10s", "QSYS", "QSYSINC");
 
     return 0;
 }

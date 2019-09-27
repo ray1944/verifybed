@@ -17,7 +17,7 @@ LINKFLAGS = -g
 LNKLIBS := 
 PGMs=memmov wrap-enum genran refofarr objincon iobasic cpp_basics1 map_basic1 \
      findinmap refaddr constmemfunc rvsitr rvsitr1 num_str getsystime stdstream \
-	  inoutiterator c11features machinfo versionstr cpstrtochararray
+	  inoutiterator c11features machinfo versionstr cpstrtochararray 
 all: $(PGMs)
 
 memmov: memmov.o
