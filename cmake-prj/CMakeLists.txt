@@ -27,22 +27,25 @@ set(TESTBED_MINOR_VERSION 01)
 ###################################################################
 # Find reqiured libraries (openssl, libgit2, boost)
 ###################################################################
+find_package(Libssh2 REQUIRED CONFIG)
 find_package(Boost 1.55 COMPONENTS 
-                            date_time
-                            exception
-                            log
-                            regex
-                            program_options 
-                            filesystem
-                        REQUIRED
-                        )
+    date_time
+    exception
+    log
+    regex
+    program_options 
+    system
+    filesystem
+    REQUIRED
+    )
 
 # Set global include directories
 include_directories(
-                    ${Boost_INCLUDE_DIRS}
-                    )
+    ${Boost_INCLUDE_DIRS}
+    )
 
 ###################################################################
 # Add sub projects
 ###################################################################
 add_subdirectory(hello)
+add_subdirectory(asio)
