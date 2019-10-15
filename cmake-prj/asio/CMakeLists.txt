@@ -10,6 +10,7 @@ set (ASIO_SRC_TCPCLT
     )
 
 set (ASIO_SRC_LIBSSH2
+    ssh_clt_base.cpp
     ssh_clt.cpp
     asio_ssh2.cpp
 )
