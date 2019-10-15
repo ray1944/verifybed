@@ -166,7 +166,7 @@ private:
 
     void try_create_shell(const boost::system::error_code &t_ec);
 
-    std::string getpass(const std::string &prompt);
+    std::string getpwd(const std::string &prompt);
 
     // private members
 private:

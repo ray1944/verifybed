@@ -15,6 +15,10 @@ set (ASIO_SRC_LIBSSH2
     asio_ssh2.cpp
 )
 
+set (ASIO_SRC_GETPW
+    pwd.cpp
+)
+
 # Build the target
 
 
@@ -22,6 +26,7 @@ set (ASIO_SRC_LIBSSH2
 add_executable(timer_test ${ASIO_SRC_TIMER})
 add_executable(tcpclient_test ${ASIO_SRC_TCPCLT})
 add_executable(asio_ssh2_test ${ASIO_SRC_LIBSSH2})
+add_executable(getpwd ${ASIO_SRC_GETPW})
 
 # Test program linked libraries
 target_link_libraries(timer_test PUBLIC
@@ -41,5 +46,8 @@ target_link_libraries(asio_ssh2_test PUBLIC
     Boost::date_time
     Boost::regex
     Libssh2::libssh2
-    ncurses
     )
+
+target_link_libraries(getpwd PUBLIC
+    ncurses
+)

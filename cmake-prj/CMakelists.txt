@@ -16,7 +16,28 @@ set(CMAKE_BINARY_DIR ${PROJECT_SOURCE_DIR}/bin)
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR})
 
 # set(FETCHCONTENT_SOURCE_DIR_BOOST /Users/ray1944/workspace/aldon/src/boost_1_70_0)
-add_subdirectory(boost-cmake)
+# add_subdirectory(boost-cmake)
+
+###################################################################
+# Find reqiured libraries (openssl, libgit2, boost)
+###################################################################
+find_package(Libssh2 REQUIRED CONFIG)
+find_package(Boost 1.55 COMPONENTS 
+    date_time
+    exception
+    log
+    regex
+    program_options 
+    system
+    filesystem
+    unit_test_framework
+    REQUIRED
+    )
+
+# Set global include directories
+include_directories(
+    ${Boost_INCLUDE_DIRS}
+    )
 
 ##################################
 # build test directory tree travels
@@ -30,3 +51,4 @@ add_subdirectory(pgm_opts)
 add_subdirectory(test_boost)
 add_subdirectory(tokenizing)
 add_subdirectory(variant)
+add_subdirectory(asio)

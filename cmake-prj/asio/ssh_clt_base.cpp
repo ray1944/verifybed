@@ -1,7 +1,8 @@
 #include "ssh_clt_base.h"
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/bind.hpp>
-#include <curses.h>
+#include <pwd.h>
+#include <unistd.h>
 
 namespace fs   = boost::filesystem;
 namespace ptm  = boost::posix_time;
@@ -195,16 +196,15 @@ void CSshCltBase::try_userauth_password(const boost::system::error_code &t_ec)
         cout << "start to authenticate by password " << endl;
         if (_passwd.size() == 0)
         {
-            getpass("Please input password: ");
+            getpwd("Please input password: ");
         }
         int rc = libssh2_userauth_password(
             _ssh_session.get(), _user.c_str(), _passwd.c_str());
         if (rc == LIBSSH2_ERROR_EAGAIN)
         {
-            if (_retry_count < 5)
+            if (_retry_count < 10)
             {
                 cout << "authenticate with password retry " << endl;
-                try_userauth_password(sys::error_code());
                 _retry_timer.expires_from_now(ptm::seconds(1));
                 _retry_timer.async_wait(
                     boost::bind(&CSshCltBase::try_userauth_password, this, _1));
@@ -293,34 +293,10 @@ void CSshCltBase::try_create_shell(const boost::system::error_code &t_ec)
     }
 }
 
-string CSshCltBase::getpass(const std::string &prompt)
+string CSshCltBase::getpwd(const std::string& prompt)
 {
-    const char BACKSPACE = 8;
-    const char RETURN = 0xd;
-    unsigned char ch = 0;
-
     _timeout_timer.cancel();
-    cout << prompt << endl;
-    while ((ch = getch()) != RETURN)
-    {
-        if (ch == BACKSPACE)
-        {
-            if (_passwd.size() != 0)
-            {
-                _passwd.resize(_passwd.size() - 1);
-            }
-            else if (ch == 0 || ch == 224)
-            {
-                getch();
-                continue;
-            }
-            else
-            {
-                _passwd += ch;
-            }
-        }
-    } // while
-    cout << endl;
+    _passwd = getpass(prompt.c_str());
     // restart timeout timer
     _timeout_timer.expires_from_now(_req_timeout);
     _timeout_timer.async_wait(boost::bind(&CSshCltBase::on_timeout, this, _1));
@@ -366,10 +342,14 @@ void CSshCltBase::disconnect()
         libssh2_session_disconnect(_ssh_session.get(), "disconnect");
         _ssh_session.reset();
     }
-    _socket.shutdown(asio::ip::tcp::socket::shutdown_both, ec);
-    if (ec)
+    if (_socket.is_open() )
     {
-        cout << ec.message() << endl;
+        _socket.shutdown(asio::ip::tcp::socket::shutdown_both, ec);
+        if (ec)
+        {
+            cout << ec.message() << endl;
+        }
+        _socket.close(ec);
     }
-    _socket.close(ec);
+    
 }
