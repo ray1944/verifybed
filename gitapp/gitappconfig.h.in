@@ -1,0 +1,2 @@
+#define gitapp_VERSION_MAJOR @gitapp_VERSION_MAJOR@
+#define gitapp_VERSION_MINOR @gitapp_VERSION_MINOR@

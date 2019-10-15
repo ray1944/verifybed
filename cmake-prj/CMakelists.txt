@@ -1,0 +1,32 @@
+PROJECT(myproject)
+message("Start to generated makefile ...")
+
+#set minimum cmake version
+cmake_minimum_required(VERSION 3.14.0)
+
+message("Platform: " ${CMAKE_SYSTEM})
+
+###################################################################
+# Global Configration
+###################################################################
+
+# Set the C++ standard to 11
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_BINARY_DIR ${PROJECT_SOURCE_DIR}/bin)
+set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR})
+
+# set(FETCHCONTENT_SOURCE_DIR_BOOST /Users/ray1944/workspace/aldon/src/boost_1_70_0)
+add_subdirectory(boost-cmake)
+
+##################################
+# build test directory tree travels
+##################################
+add_subdirectory(traveldir)
+
+###################################################
+# build program options with boost program_options
+###################################################
+add_subdirectory(pgm_opts)
+add_subdirectory(test_boost)
+add_subdirectory(tokenizing)
+add_subdirectory(variant)

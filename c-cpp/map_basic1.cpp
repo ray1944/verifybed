@@ -35,7 +35,7 @@ int main(int argc, const char* argv[]) {
 
     for (it = tst.begin(); it != tst.end(); ) {
         if (it->first == "name1") {
-            it = tst.erase(it);
+            tst.erase(it++);
         } else {
             ++it;
         }
@@ -74,6 +74,7 @@ int main(int argc, const char* argv[]) {
         cout << cobjit->first << endl;
     }
     string end;
+    cout << std::hex << 10 << endl;
     cin >> end;
 
     return 0;
