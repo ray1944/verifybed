@@ -63,13 +63,21 @@ void test_cltsshshell()
    {
       cout << "ssh client is connected to aldev73a" << endl;
    }
-   asio::deadline_timer::duration_type create_shell_timeout = ptm::seconds(30);
-   sshcltptr->async_exec(CCmd("uname"), create_shell_timeout);
-   ios.reset();
-   ios.run();
-   cout << "Result: " << sshcltptr->GetResult() << endl;
-   sshcltptr->async_exec(CCmd("g++ --version"), create_shell_timeout);
-   cout << "Result: " << sshcltptr->GetResult() << endl;
+   if (sshcltptr->GetState() == eAuthSuccess)
+   {
+      asio::deadline_timer::duration_type create_shell_timeout = ptm::seconds(30);
+      sshcltptr->async_exec(CCmd("uname"), create_shell_timeout);
+      ios.reset();
+      ios.run();
+      cout << "Result: " << sshcltptr->GetLastResult() << endl;
+      sshcltptr->try_free_channel(boost::system::error_code());
+
+      sshcltptr->async_exec(CCmd("g++ --version"), create_shell_timeout);
+      cout << "Result: " << sshcltptr->GetLastResult() << endl;
+      sshcltptr->try_free_channel(boost::system::error_code());
+   }
+   
+   
    sshcltptr->disconnect();
    if (!sshcltptr->is_connected())
    {

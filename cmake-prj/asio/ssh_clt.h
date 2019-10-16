@@ -49,8 +49,10 @@ public:
     void async_exec(
         const CCmd& t_cmd,
         const boost::asio::deadline_timer::duration_type& t_timeout);
+    
+    void try_free_channel(const boost::system::error_code& t_ec);
 
-    std::string GetResult()
+    std::string GetLastResult()
     {
         std::string ret = _in_buffer;
         _in_buffer.clear();
@@ -67,8 +69,6 @@ private:
     void try_read_reply(const boost::system::error_code& t_ec);
 
     void try_create_channel(const boost::system::error_code& t_ec);
-
-    void try_free_channel(const boost::system::error_code& t_ec);
 
     void on_timeout(const boost::system::error_code &t_ec);
 

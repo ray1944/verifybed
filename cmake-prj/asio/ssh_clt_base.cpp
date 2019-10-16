@@ -87,6 +87,8 @@ void CSshCltBase::handle_connect(const boost::system::error_code &t_ec)
         else
         {
             cout << "Connect failed " << t_ec.message() << endl;
+            _running_state = eConnFailed;
+            _timeout_timer.cancel();
         }
     }
     else
@@ -106,6 +108,7 @@ void CSshCltBase::on_timeout(const boost::system::error_code &t_ec)
     if (!t_ec)
     {
         cout << "time out. reset all " << endl;
+        _running_state = eTimeout;
         reset();
     }
 }
@@ -120,17 +123,21 @@ void CSshCltBase::try_ssh_handshake(const boost::system::error_code &t_ec)
             _socket.native_handle());
         if (rc == LIBSSH2_ERROR_EAGAIN)
         {
-            if (_retry_count < 10)
+            if (_retry_count < 100)
             {
                 cout << "handshake continue receive again " << endl;
                 _retry_count++;
-                _retry_timer.expires_from_now(ptm::milliseconds(500));
-                _retry_timer.async_wait(
-                    boost::bind(&CSshCltBase::try_ssh_handshake, this, _1));
+                // _retry_timer.expires_from_now(ptm::milliseconds(100));
+                // _retry_timer.async_wait(
+                //     boost::bind(&CSshCltBase::try_ssh_handshake, this, _1));
+                waitsocket(boost::bind(&CSshCltBase::try_ssh_handshake, this, _1));
             }
             else
             {
                 cout << "SSH handshake failed." << endl;
+                _running_state = eHandShakeFailed;
+                _timeout_timer.cancel();
+                reset();
             }
         }
         else if (!rc)
@@ -164,14 +171,18 @@ void CSshCltBase::try_authenticate(const boost::system::error_code &t_ec)
             {
                 cout << "authenticate waiting for again " << endl;
                 _retry_count++;
-                _retry_timer.expires_at(
-                    _retry_timer.expires_at() + ptm::milliseconds(100));
-                _retry_timer.async_wait(
-                    boost::bind(&CSshCltBase::try_authenticate, this, _1));
+                // _retry_timer.expires_at(
+                //     _retry_timer.expires_at() + ptm::milliseconds(100));
+                // _retry_timer.async_wait(
+                //     boost::bind(&CSshCltBase::try_authenticate, this, _1));
+                waitsocket(boost::bind(&CSshCltBase::try_authenticate, this, _1));
             }
             else
             {
                 cout << "User authenticate failed." << endl;
+                _running_state = eAuthFailed;
+                _timeout_timer.cancel();
+                reset();
             }
         }
         else if (!rc)
@@ -179,6 +190,7 @@ void CSshCltBase::try_authenticate(const boost::system::error_code &t_ec)
             //try next step
             cout << "authenticate success " << endl;
             // try_create_channel(sys::error_code());
+            _running_state = eAuthSuccess;
             _timeout_timer.cancel();
         }
         else
@@ -213,7 +225,9 @@ void CSshCltBase::try_userauth_password(const boost::system::error_code &t_ec)
             else
             {
                 cout << "User password authentication failed." << endl;
+                _running_state = eAuthFailed;
                 reset();
+                _timeout_timer.cancel();
             }
         }
         else if (!rc)

@@ -85,6 +85,8 @@ void CSshClient::try_create_channel(const boost::system::error_code &t_ec)
             }
             else
             {
+                
+                cout << "last error rc: " << rc << endl;
                 reset();
             }
         }
@@ -160,11 +162,12 @@ void CSshClient::try_free_channel(const sys::error_code& t_ec)
         }
         else if (!rc)
         {
-            libssh2_channel_free(_ssh_channel.get());
             _ssh_channel.reset();
+            cout << "channel freed" << endl;
         }
         else
         {
+            cout << "rc: " << rc << endl;
             reset();
         }
     }

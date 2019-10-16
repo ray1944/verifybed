@@ -130,6 +130,15 @@ public:
     }
 };
 
+typedef enum
+{
+    eConnFailed,
+    eAuthFailed,
+    eHandShakeFailed,
+    eTimeout,
+    eAuthSuccess,
+}ESshResult;
+
 class CSshCltBase
 {
 public:
@@ -158,6 +167,11 @@ public:
 
     void disconnect();
 
+    ESshResult GetState() const
+    {
+        return _running_state;
+    }
+
     // protected members
 protected:
     boost::asio::ip::tcp::socket _socket; // client socket
@@ -165,6 +179,8 @@ protected:
 
     std::shared_ptr<LIBSSH2_SESSION> _ssh_session; // libssh2 session
     std::shared_ptr<LIBSSH2_CHANNEL> _ssh_channel; // libssh2 channel
+
+    ESshResult _running_state; // running result;
 
     // protected methods
 protected:
