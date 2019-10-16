@@ -6,6 +6,7 @@
 #include <boost/asio.hpp>
 #include <boost/filesystem.hpp>
 #include <string>
+#include <boost/algorithm/string/trim.hpp>
 
 //CSshCltBase exception
 class CSshException : public std::runtime_error
@@ -111,6 +112,24 @@ struct Ssh2Init
     }
 };
 
+class CCmd {
+    std::string _command;
+    char _reply_delimiter;
+
+public:
+    explicit CCmd(const std::string& command, char delimiter = '\n')
+        : _command(boost::trim_copy(command)), _reply_delimiter(delimiter) 
+    {
+        _command += std::string("; echo -en '") + _reply_delimiter + "'\n";
+    }
+    std::string str() const {
+      return _command;
+    }
+    char reply_delimiter() const {
+      return _reply_delimiter;
+    }
+};
+
 class CSshCltBase
 {
 public:
@@ -121,6 +140,11 @@ public:
         const std::string &t_user,
         const std::string &t_host,
         const std::string &t_port);
+
+    virtual ~CSshCltBase()
+    {
+        reset();
+    }
 
     // forbiden copy ctor. and assignment
     CSshCltBase(const CSshCltBase &t_oths) = delete;
@@ -160,8 +184,6 @@ private:
     void try_authenticate(const boost::system::error_code &t_ec);
 
     void try_userauth_password(const boost::system::error_code &t_ec);
-
-    void try_create_channel(const boost::system::error_code &t_ec);
 
     // void try_create_shell(const boost::system::error_code &t_ec);
 

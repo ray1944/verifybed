@@ -124,7 +124,7 @@ void CSshCltBase::try_ssh_handshake(const boost::system::error_code &t_ec)
             {
                 cout << "handshake continue receive again " << endl;
                 _retry_count++;
-                _retry_timer.expires_from_now(ptm::seconds(1));
+                _retry_timer.expires_from_now(ptm::milliseconds(500));
                 _retry_timer.async_wait(
                     boost::bind(&CSshCltBase::try_ssh_handshake, this, _1));
             }
@@ -165,7 +165,7 @@ void CSshCltBase::try_authenticate(const boost::system::error_code &t_ec)
                 cout << "authenticate waiting for again " << endl;
                 _retry_count++;
                 _retry_timer.expires_at(
-                    _retry_timer.expires_at() + ptm::seconds(1));
+                    _retry_timer.expires_at() + ptm::milliseconds(100));
                 _retry_timer.async_wait(
                     boost::bind(&CSshCltBase::try_authenticate, this, _1));
             }
@@ -178,7 +178,8 @@ void CSshCltBase::try_authenticate(const boost::system::error_code &t_ec)
         {
             //try next step
             cout << "authenticate success " << endl;
-            try_create_channel(sys::error_code());
+            // try_create_channel(sys::error_code());
+            _timeout_timer.cancel();
         }
         else
         {
@@ -205,7 +206,7 @@ void CSshCltBase::try_userauth_password(const boost::system::error_code &t_ec)
             if (_retry_count < 10)
             {
                 cout << "authenticate with password retry " << endl;
-                _retry_timer.expires_from_now(ptm::seconds(1));
+                _retry_timer.expires_from_now(ptm::milliseconds(100));
                 _retry_timer.async_wait(
                     boost::bind(&CSshCltBase::try_userauth_password, this, _1));
             }
@@ -218,40 +219,12 @@ void CSshCltBase::try_userauth_password(const boost::system::error_code &t_ec)
         else if (!rc)
         {
             cout << "start to create channel " << endl;
-            try_create_channel(sys::error_code());
+            // try_create_channel(sys::error_code());
         }
         else
         {
             cout << "authenticate failed " << endl;
             reset();
-        }
-    }
-}
-
-void CSshCltBase::try_create_channel(const boost::system::error_code &t_ec)
-{
-    if (!t_ec)
-    {
-        cout << "create channel" << endl;
-        _ssh_channel.reset(
-            libssh2_channel_open_session(_ssh_session.get()),
-            libssh2_channel_free);
-        if (!_ssh_channel)
-        {
-            int rc = libssh2_session_last_error(_ssh_session.get(), 0, 0, 0);
-            if (rc == LIBSSH2_ERROR_EAGAIN)
-            {
-                waitsocket(boost::bind(&CSshCltBase::try_create_channel, this, _1));
-            }
-            else
-            {
-                reset();
-            }
-        }
-        else
-        {
-            cout << "SSH connection channel is setup" << endl;
-            _timeout_timer.cancel();
         }
     }
 }

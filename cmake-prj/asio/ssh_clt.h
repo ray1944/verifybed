@@ -47,12 +47,15 @@ public:
      * returns command output 
      * */
     void async_exec(
-        const std::string& t_cmd,
+        const CCmd& t_cmd,
         const boost::asio::deadline_timer::duration_type& t_timeout);
 
-    std::string GetResult() const
+    std::string GetResult()
     {
-        return _buffer;
+        std::string ret = _in_buffer;
+        _in_buffer.clear();
+
+        return ret;
     }
 
 private:
@@ -63,17 +66,25 @@ private:
 
     void try_read_reply(const boost::system::error_code& t_ec);
 
+    void try_create_channel(const boost::system::error_code& t_ec);
+
+    void try_free_channel(const boost::system::error_code& t_ec);
+
     void on_timeout(const boost::system::error_code &t_ec);
 
     template <typename Handler>
     void waitsocket(Handler handler);
 
+    int wsocket(int socket, LIBSSH2_SESSION* session);
+
     void reset();
 
 private:
-    std::string _buffer; // internal write and receive buffer
+    std::string _in_buffer;  // internal receive buffer
+    std::string _out_buffer; // internal write buffer
     std::string::iterator _buffer_curr; // buffer pointer
     bool _shell_channel_config; // shell channel configured
+    char _reply_delimiter;      // peer reply end of delimiter
 };
 
 #endif // __SSH_CLT_H__

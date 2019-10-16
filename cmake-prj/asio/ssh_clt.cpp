@@ -33,37 +33,6 @@ CSshClient::CSshClient(
         _shell_channel_config(false)
 {}
 
-void CSshClient::try_create_shell(const boost::system::error_code& t_ec)
-{
-    cout << "configure shell channel" << endl;
-    if (!t_ec && _ssh_channel)
-    {
-        int rc = 0;
-        if (!_shell_channel_config)
-        {
-            rc =libssh2_channel_shell(_ssh_channel.get());
-        }
-
-        if (!rc)
-        {
-            cout << "shell channel configured" << endl;
-            _shell_channel_config = true;
-            // _timeout_timer.cancel();
-            _socket.async_write_some(
-                asio::null_buffers(),
-                boost::bind(&CSshClient::try_send_command, this, _1));
-        }
-        else if (rc == LIBSSH2_ERROR_EAGAIN)
-        {
-            waitsocket(boost::bind(&CSshClient::try_create_shell, this, _1));
-        }
-        else
-        {
-            reset();
-        }
-    }
-}
-
 void CSshClient::on_timeout(const boost::system::error_code &t_ec)
 {
     CSshCltBase::on_timeout(t_ec);
@@ -73,45 +42,61 @@ void CSshClient::try_send_command(const sys::error_code& t_ec)
 {
     if (!t_ec)
     {
-        ssize_t nwritten = libssh2_channel_write(
-            _ssh_channel.get(),
-            &*_buffer_curr,
-            std::distance(_buffer_curr, std::end(_buffer)));
-        bool eom = false;
-        while (nwritten >= 0 && !eom)
-        {
-            std::advance(_buffer_curr, nwritten);
-            eom = (_buffer_curr == std::end(_buffer));
-            if (!eom)
-            {
-                nwritten = libssh2_channel_write(
-                    _ssh_channel.get(), 
-                    &*_buffer_curr, 
-                    std::distance(_buffer_curr, std::end(_buffer)));
-            }
-        }
-        if (nwritten < 0 || !eom)
-        {
-            cout << "send data failed" << endl;
-
-            return;
-        }
-        if (eom)
-        {
-            cout << "command(" << _buffer << ") sent to peer " << endl;
-            _buffer.clear();
-            _socket.async_receive(
-                asio::null_buffers(),
-                boost::bind(&CSshClient::try_read_reply, this, _1));
-        }
-        else if (nwritten == LIBSSH2_ERROR_EAGAIN)
+        // libssh2_trace(_ssh_session.get(), ~0);
+        // cout << "exec command: " << _buffer << endl;
+        int rc = libssh2_channel_exec(_ssh_channel.get(), _out_buffer.c_str());
+        // cout << rc << endl;
+        if (rc == LIBSSH2_ERROR_EAGAIN)
         {
             waitsocket(boost::bind(&CSshClient::try_send_command, this, _1));
         }
+        else if (!rc)
+        {
+            cout << "command sent to peer and wait for reply" << endl;
+            try_read_reply(sys::error_code());
+        }
         else
         {
+            cout << "failed to exec, reset" << endl;
             reset();
+            _timeout_timer.cancel();
         }
+    }
+    else
+    {
+        cout << t_ec.message() << endl;
+    }
+}
+
+void CSshClient::try_create_channel(const boost::system::error_code &t_ec)
+{
+    if (!t_ec)
+    {
+        cout << "open channel" << endl;
+        _ssh_channel.reset(
+            libssh2_channel_open_session(_ssh_session.get()),
+            libssh2_channel_free);
+        if (!_ssh_channel)
+        {
+            int rc = libssh2_session_last_error(_ssh_session.get(), 0, 0, 0);
+            if (rc == LIBSSH2_ERROR_EAGAIN)
+            {
+                waitsocket(boost::bind(&CSshClient::try_create_channel, this, _1));
+            }
+            else
+            {
+                reset();
+            }
+        }
+        else
+        {
+            cout << "SSH connection channel was open" << endl;
+            try_send_command(sys::error_code());
+        }
+    }
+    else
+    {
+        cout << "channel open failed " << t_ec.message() << endl;
     }
 }
 
@@ -130,9 +115,14 @@ void CSshClient::try_read_reply(const boost::system::error_code& t_ec)
         {
             buffer_type::iterator data_begin = std::begin(data);
             buffer_type::iterator data_end = std::begin(data) + len;
-            _buffer.insert(std::end(_buffer), data_begin, data_end);
-            cout << _buffer << endl;
-            cout << "eof: " << libssh2_channel_eof(_ssh_channel.get()) << endl;
+            if (*(data_end - 1) == _reply_delimiter)
+            {
+                eom = true;
+                --data_end;
+            }
+            _in_buffer.insert(std::end(_in_buffer), data_begin, data_end);
+            // cout << _buffer << endl;
+            // cout << "eof: " << libssh2_channel_eof(_ssh_channel.get()) << endl;
             if (!eom)
             {
                 len = libssh2_channel_read(
@@ -140,7 +130,7 @@ void CSshClient::try_read_reply(const boost::system::error_code& t_ec)
                     data.data(), 
                     data.size());
             }
-            cout << "len: " << len << endl;
+            // cout << "len: " << len << endl;
         }
         if (eom)
         {
@@ -155,9 +145,28 @@ void CSshClient::try_read_reply(const boost::system::error_code& t_ec)
             reset();
         }
     }
-    else
+}
+
+void CSshClient::try_free_channel(const sys::error_code& t_ec)
+{
+    if (!t_ec)
     {
-        cout << t_ec.message() << endl;
+        cout << "try to free channel" << endl;
+        int rc = libssh2_channel_close(_ssh_channel.get());
+
+        if (rc == LIBSSH2_ERROR_EAGAIN)
+        {
+            waitsocket(boost::bind(&CSshClient::try_free_channel, this, _1));
+        }
+        else if (!rc)
+        {
+            libssh2_channel_free(_ssh_channel.get());
+            _ssh_channel.reset();
+        }
+        else
+        {
+            reset();
+        }
     }
 }
 
@@ -168,29 +177,33 @@ void CSshClient::waitsocket(Handler handler)
 
     if (direction & LIBSSH2_SESSION_BLOCK_INBOUND)
     {
+        // cout << "inbound" << endl;
         _socket.async_read_some(asio::null_buffers(), handler);
     }
     if (direction & LIBSSH2_SESSION_BLOCK_OUTBOUND)
     {
+        // cout << "outbound" << endl;
         _socket.async_write_some(asio::null_buffers(), handler);
     }
 }
 
 void CSshClient::async_exec(
-    const string& t_cmd,
-    const boost::asio::deadline_timer::duration_type& t_timeout)
+    const CCmd& t_cmd,
+    const asio::deadline_timer::duration_type& t_timeout)
 {
     _timeout_timer.cancel();
     _timeout_timer.expires_from_now(t_timeout);
-    _buffer = t_cmd;
-    _buffer_curr = std::begin(_buffer);
+    _out_buffer = t_cmd.str();
+    // _buffer_curr = std::begin(_buffer);
+    _reply_delimiter = t_cmd.reply_delimiter();
 
-    try_create_shell(sys::error_code());
+    try_create_channel(sys::error_code());
     _timeout_timer.async_wait(boost::bind(&CSshClient::on_timeout, this, _1));
 }
 
 void CSshClient::reset()
 {
     CSshCltBase::reset();
-    _buffer.clear();
+    _in_buffer.clear();
+    _out_buffer.clear();
 }
