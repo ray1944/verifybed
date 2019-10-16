@@ -36,7 +36,7 @@ CSshCltBase::CSshCltBase(
 }
 
 void CSshCltBase::async_connect(
-    const asio::deadline_timer::duration_type &t_timeout)
+    const asio::deadline_timer::duration_type& t_timeout)
 {
    try_connect(sys::error_code());
    _req_timeout = t_timeout;
@@ -236,12 +236,7 @@ void CSshCltBase::try_create_channel(const boost::system::error_code &t_ec)
         _ssh_channel.reset(
             libssh2_channel_open_session(_ssh_session.get()),
             libssh2_channel_free);
-        if (_ssh_channel)
-        {
-            cout << "start to start shell channel" << endl;
-            try_create_shell(sys::error_code());
-        }
-        else
+        if (!_ssh_channel)
         {
             int rc = libssh2_session_last_error(_ssh_session.get(), 0, 0, 0);
             if (rc == LIBSSH2_ERROR_EAGAIN)
@@ -252,6 +247,11 @@ void CSshCltBase::try_create_channel(const boost::system::error_code &t_ec)
             {
                 reset();
             }
+        }
+        else
+        {
+            cout << "SSH connection channel is setup" << endl;
+            _timeout_timer.cancel();
         }
     }
 }
@@ -268,28 +268,6 @@ void CSshCltBase::waitsocket(Handler handler)
     if (direction & LIBSSH2_SESSION_BLOCK_OUTBOUND)
     {
         _socket.async_write_some(asio::null_buffers(), handler);
-    }
-}
-
-void CSshCltBase::try_create_shell(const boost::system::error_code &t_ec)
-{
-    if (!t_ec)
-    {
-        int rc = libssh2_channel_shell(_ssh_channel.get());
-
-        if (!rc)
-        {
-            cout << "ssh connected" << endl;
-            _timeout_timer.cancel();
-        }
-        else if (rc == LIBSSH2_ERROR_EAGAIN)
-        {
-            waitsocket(boost::bind(&CSshCltBase::try_create_shell, this, _1));
-        }
-        else
-        {
-            reset();
-        }
     }
 }
 
@@ -316,7 +294,6 @@ void CSshCltBase::reset()
     _timeout_timer.cancel(ec);
     _retry_timer.cancel(ec);
     _socket.cancel(ec);
-    _buffer.clear();
     _ssh_channel.reset();
     _ssh_session.reset();
     _socket.close();
@@ -330,7 +307,6 @@ void CSshCltBase::disconnect()
     _retry_timer.cancel(ec);
     _timeout_timer.cancel(ec);
     _socket.cancel(ec);
-    _buffer.clear();
     if (_ssh_channel)
     {
         libssh2_channel_send_eof(_ssh_channel.get());

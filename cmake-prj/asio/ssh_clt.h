@@ -38,6 +38,42 @@ public:
     // forbiden copy ctor. and assignment
     CSshClient(const CSshClient& t_oths) = delete;
     CSshClient& operator=(const CSshClient& t_oths) = delete;
+
+    // void async_create_shell(
+    //     const boost::asio::deadline_timer::duration_type& t_timeout);
+ 
+    /*
+     * async execute command on endpoint
+     * returns command output 
+     * */
+    void async_exec(
+        const std::string& t_cmd,
+        const boost::asio::deadline_timer::duration_type& t_timeout);
+
+    std::string GetResult() const
+    {
+        return _buffer;
+    }
+
+private:
+    //try to create exec channel
+    void try_create_shell(const boost::system::error_code& t_ec);
+
+    void try_send_command(const boost::system::error_code& t_ec);
+
+    void try_read_reply(const boost::system::error_code& t_ec);
+
+    void on_timeout(const boost::system::error_code &t_ec);
+
+    template <typename Handler>
+    void waitsocket(Handler handler);
+
+    void reset();
+
+private:
+    std::string _buffer; // internal write and receive buffer
+    std::string::iterator _buffer_curr; // buffer pointer
+    bool _shell_channel_config; // shell channel configured
 };
 
 #endif // __SSH_CLT_H__

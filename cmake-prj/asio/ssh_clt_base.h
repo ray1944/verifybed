@@ -137,10 +137,16 @@ public:
     // protected members
 protected:
     boost::asio::ip::tcp::socket _socket; // client socket
-    std::string _buffer;                  // internal write and receive buffer
+    boost::asio::deadline_timer _timeout_timer;    // timeout timer
 
     std::shared_ptr<LIBSSH2_SESSION> _ssh_session; // libssh2 session
     std::shared_ptr<LIBSSH2_CHANNEL> _ssh_channel; // libssh2 channel
+
+    // protected methods
+protected:
+    void reset();
+
+    void on_timeout(const boost::system::error_code &t_ec);
 
     // private methods
 private:
@@ -148,10 +154,6 @@ private:
     void try_connect(const boost::system::error_code &t_ec);
 
     void handle_connect(const boost::system::error_code &t_ec);
-
-    void on_timeout(const boost::system::error_code &t_ec);
-
-    void reset();
 
     void try_ssh_handshake(const boost::system::error_code &t_ec);
 
@@ -161,12 +163,12 @@ private:
 
     void try_create_channel(const boost::system::error_code &t_ec);
 
-    template <typename Handler>
-    void waitsocket(Handler handler);
-
-    void try_create_shell(const boost::system::error_code &t_ec);
+    // void try_create_shell(const boost::system::error_code &t_ec);
 
     std::string getpwd(const std::string &prompt);
+
+    template <typename Handler>
+    void waitsocket(Handler handler);
 
     // private members
 private:
@@ -178,7 +180,6 @@ private:
 
     // request timer out 
     boost::asio::deadline_timer::duration_type _req_timeout;
-    boost::asio::deadline_timer _timeout_timer; // timeout timer
     boost::asio::deadline_timer _retry_timer;
     int _retry_count;    // retry counter    
 };
