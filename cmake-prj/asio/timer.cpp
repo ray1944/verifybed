@@ -133,7 +133,7 @@ class printer
 public:
     printer(asio::io_service& ios):_timer(ios, ptm::seconds(1)), _count(0)
     {
-        _timer.async_wait(boost::bind(&printer::print, this));
+        _timer.async_wait(boost::bind(&printer::print, this, _1));
     }
 
     ~printer()
@@ -141,18 +141,33 @@ public:
         cout << "Final count is " << _count << endl;
     }
 
-    void print()
+    void print(const boost::system::error_code& ec)
     {
-        if (_count < 5)
+        if (!ec)
         {
-            int level = _count;
-            cout << _count << endl;
-            ++_count;
-            _timer.expires_at(_timer.expires_at() + ptm::seconds(1));
-            _timer.async_wait(boost::bind(&printer::print, this));
-            cout << "call stack " << level << endl; 
+            if (_count < 5)
+            {
+                if (_count == 3)
+                {
+                    cout << "timer cancel ... " << endl;
+                    _timer.cancel();
+                    return;
+                }
+                int level = _count;
+                cout << _count << endl;
+                ++_count;
+                _timer.expires_at(_timer.expires_at() + ptm::seconds(1));
+                _timer.async_wait(boost::bind(&printer::print, this, _1));
+                cout << "call stack " << level << endl; 
+            }
         }
+        else
+        {
+            cout << "timer called" << endl;
+        }        
     }
+
+    
 
 private:
     asio::deadline_timer _timer;
@@ -161,9 +176,9 @@ private:
 
 int main()
 {
-    block_timer();
-    async_wait();
-    repeating_timer();
+    // block_timer();
+    // async_wait();
+    // repeating_timer();
     asio::io_service ios;
     printer p(ios);
     ios.run();
