@@ -35,7 +35,15 @@ CSshClient::CSshClient(
 
 void CSshClient::on_timeout(const boost::system::error_code &t_ec)
 {
-    CSshCltBase::on_timeout(t_ec);
+    if (!t_ec)
+    {
+        cout << "global timeout timer is out" << endl;
+        reset();
+    }
+    else
+    {
+        cout << "timeout timer cancelled" << endl;
+    }
 }
 
 void CSshClient::try_send_command(const sys::error_code& t_ec)
@@ -81,6 +89,7 @@ void CSshClient::try_create_channel(const boost::system::error_code &t_ec)
             int rc = libssh2_session_last_error(_ssh_session.get(), 0, 0, 0);
             if (rc == LIBSSH2_ERROR_EAGAIN)
             {
+                cout << "conitnue open channel" << endl;
                 waitsocket(boost::bind(&CSshClient::try_create_channel, this, _1));
             }
             else
@@ -108,10 +117,24 @@ void CSshClient::try_read_reply(const boost::system::error_code& t_ec)
     {
         typedef std::array<char, 4096> buffer_type;
         buffer_type data;
-        ssize_t len = libssh2_channel_read(
+        bool haserror = false;
+
+        ssize_t len = libssh2_channel_read_stderr(
+            _ssh_channel.get(), 
+            data.data(), 
+            data.size());
+        if (len > 0)
+        {
+            haserror = true;
+        }
+        
+        if (!haserror)
+        {
+            len = libssh2_channel_read(
             _ssh_channel.get(),
             data.data(),
             data.size());
+        }
         bool eom = false;
         while(len >= 0 && !eom)
         {
@@ -119,24 +142,38 @@ void CSshClient::try_read_reply(const boost::system::error_code& t_ec)
             buffer_type::iterator data_end = std::begin(data) + len;
             if (*(data_end - 1) == _reply_delimiter)
             {
+                // cout << "eom to true" << endl;
                 eom = true;
                 --data_end;
             }
             _in_buffer.insert(std::end(_in_buffer), data_begin, data_end);
-            // cout << _buffer << endl;
-            // cout << "eof: " << libssh2_channel_eof(_ssh_channel.get()) << endl;
+            // cout << _in_buffer << ": len : " << _in_buffer.size() << endl;
+            // cout << "eof: " << libssh2_channel_eof(_ssh_channel.get()) << endl;            
             if (!eom)
             {
-                len = libssh2_channel_read(
-                    _ssh_channel.get(), 
-                    data.data(), 
-                    data.size());
+                if (haserror)
+                {
+                    len = libssh2_channel_read_stderr(
+                        _ssh_channel.get(), 
+                        data.data(), 
+                        data.size());
+                }
+                else
+                {
+                    len = libssh2_channel_read(
+                        _ssh_channel.get(), 
+                        data.data(), 
+                        data.size());
+                }
             }
             // cout << "len: " << len << endl;
         }
         if (eom)
         {
+            cout << "global timeout timer cancelled" << endl;
+            cout << _in_buffer << ": len : " << _in_buffer.size() << endl;
             _timeout_timer.cancel();
+            try_free_channel(sys::error_code());
         }
         else if (len == LIBSSH2_ERROR_EAGAIN)
         {
@@ -164,6 +201,7 @@ void CSshClient::try_free_channel(const sys::error_code& t_ec)
         {
             _ssh_channel.reset();
             cout << "channel freed" << endl;
+            // cout << _ssh_channel.get() << endl;
         }
         else
         {

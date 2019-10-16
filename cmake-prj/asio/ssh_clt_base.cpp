@@ -232,8 +232,10 @@ void CSshCltBase::try_userauth_password(const boost::system::error_code &t_ec)
         }
         else if (!rc)
         {
-            cout << "start to create channel " << endl;
+            cout << "open channel success" << endl;
             // try_create_channel(sys::error_code());
+            _running_state = eAuthSuccess;
+            _timeout_timer.cancel();
         }
         else
         {

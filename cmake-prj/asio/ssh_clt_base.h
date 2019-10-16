@@ -120,7 +120,7 @@ public:
     explicit CCmd(const std::string& command, char delimiter = '\n')
         : _command(boost::trim_copy(command)), _reply_delimiter(delimiter) 
     {
-        _command += std::string("; echo -en '") + _reply_delimiter + "'\n";
+        _command += std::string(";'") + _reply_delimiter + "'\n";
     }
     std::string str() const {
       return _command;

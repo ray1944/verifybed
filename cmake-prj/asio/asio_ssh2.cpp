@@ -52,8 +52,8 @@ void test_cltsshshell()
    asio::io_service ios;
    fs::path ssh_dir = "/Users/ray1944/.ssh";
    CSshClientPtr sshcltptr(
-      CSshClient::create(ios, ssh_dir, "pcheng", "aldev73a"));
-   asio::deadline_timer::duration_type connect_timeout = ptm::seconds(30);
+      CSshClient::create(ios, ssh_dir, "ray1944", "localhost"));
+   asio::deadline_timer::duration_type connect_timeout = ptm::seconds(20);
 
    sshcltptr->async_connect(connect_timeout);
    ios.reset();
@@ -65,16 +65,24 @@ void test_cltsshshell()
    }
    if (sshcltptr->GetState() == eAuthSuccess)
    {
-      asio::deadline_timer::duration_type create_shell_timeout = ptm::seconds(30);
+      asio::deadline_timer::duration_type create_shell_timeout = ptm::seconds(20);
       sshcltptr->async_exec(CCmd("uname"), create_shell_timeout);
       ios.reset();
       ios.run();
       cout << "Result: " << sshcltptr->GetLastResult() << endl;
-      sshcltptr->try_free_channel(boost::system::error_code());
+      // sshcltptr->try_free_channel(boost::system::error_code());
 
       sshcltptr->async_exec(CCmd("g++ --version"), create_shell_timeout);
+      ios.reset();
+      ios.run();
       cout << "Result: " << sshcltptr->GetLastResult() << endl;
-      sshcltptr->try_free_channel(boost::system::error_code());
+      
+      sshcltptr->async_exec(
+         CCmd("/home/pcheng/igit/bin/igit1 --version"), 
+         create_shell_timeout);
+      ios.reset();
+      ios.run();
+      cout << "Result: " << sshcltptr->GetLastResult() << endl;
    }
    
    
