@@ -52,7 +52,7 @@ void test_cltsshshell()
    asio::io_service ios;
    fs::path ssh_dir = "/Users/ray1944/.ssh";
    CSshClientPtr sshcltptr(
-      CSshClient::create(ios, ssh_dir, "ray1944", "localhost"));
+      CSshClient::create(ios, ssh_dir, "pcheng", "aldev73a"));
    asio::deadline_timer::duration_type connect_timeout = ptm::seconds(20);
 
    sshcltptr->async_connect(connect_timeout);
@@ -76,6 +76,8 @@ void test_cltsshshell()
       ios.reset();
       ios.run();
       cout << "Result: " << sshcltptr->GetLastResult() << endl;
+
+      
       
       sshcltptr->async_exec(
          CCmd("/home/pcheng/igit/bin/igit1 --version"), 

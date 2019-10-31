@@ -137,6 +137,7 @@ typedef enum
     eHandShakeFailed,
     eTimeout,
     eAuthSuccess,
+    eCmdExecSuccess,
 }ESshResult;
 
 class CSshCltBase
@@ -179,7 +180,6 @@ protected:
 
     std::shared_ptr<LIBSSH2_SESSION> _ssh_session; // libssh2 session
     std::shared_ptr<LIBSSH2_CHANNEL> _ssh_channel; // libssh2 channel
-
     ESshResult _running_state; // running result;
 
     // protected methods
@@ -200,8 +200,6 @@ private:
     void try_authenticate(const boost::system::error_code &t_ec);
 
     void try_userauth_password(const boost::system::error_code &t_ec);
-
-    // void try_create_shell(const boost::system::error_code &t_ec);
 
     std::string getpwd(const std::string &prompt);
 

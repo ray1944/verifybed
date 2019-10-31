@@ -31,9 +31,9 @@ public:
     CSshClient(
         boost::asio::io_service &t_ios,
         const boost::filesystem::path &t_ssh_dir,
-        const std::string &t_user,
-        const std::string &t_host,
-        const std::string &t_port);
+        const std::string& t_user,
+        const std::string& t_host,
+        const std::string& t_port);
 
     // forbiden copy ctor. and assignment
     CSshClient(const CSshClient& t_oths) = delete;
@@ -49,8 +49,6 @@ public:
     void async_exec(
         const CCmd& t_cmd,
         const boost::asio::deadline_timer::duration_type& t_timeout);
-    
-    void try_free_channel(const boost::system::error_code& t_ec);
 
     std::string GetLastResult()
     {
@@ -69,6 +67,8 @@ private:
     void try_read_reply(const boost::system::error_code& t_ec);
 
     void try_create_channel(const boost::system::error_code& t_ec);
+
+    void try_free_channel(const boost::system::error_code& t_ec);
 
     void on_timeout(const boost::system::error_code &t_ec);
 
