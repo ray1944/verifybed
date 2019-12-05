@@ -37,39 +37,9 @@ cpp_basics1: cpp_basics1.o
 map_basic1: map_basic1.o 
 	$(CXX) $(LINKFLAGS) -o $@ $<
 findinmap: findinmap.o
-<<<<<<< HEAD
 	$(CXX) $(CFLAGS) -o $@ $<
 nrand: nrand.o
 	$(CXX) $(CFLAGS) -o $@ $<
-||||||| merged common ancestors
-	$(CXX) $(CFLAGS) -o $@ $<
-=======
-	$(CXX) $(LINKFLAGS) -o $@ $<
-refaddr: refaddr.o
-	$(CXX) $(LINKFLAGS) -o $@ $<
-constmemfunc: constmemfunc.o
-	$(CXX) $(LINKFLAGS) -o $@ $<
-rvsitr: rvsitr.o
-	$(CXX) $(LINKFLAGS) -o $@ $<
-rvsitr1: rvsitr1.o
-	$(CXX) $(LINKFLAGS) -o $@ $<
-num_str: num_str.o
-	$(CXX) $(LINKFLAGS) -o $@ $<
-getsystime: getsystime.o 
-	$(CXX) $(LINKFLAGS) -o $@ $<
-stdstream: stdstream.o
-	$(CXX) $(LINKFLAGS) -o $@ $<
-inoutiterator: inoutiterator.o
-	$(CXX) $(LINKFLAGS) -o $@ $<
-c11features: c11features.o
-	$(CXX) $(LINKFLAGS) -o $@ $<
-machinfo: checkmachineinfo.o
-	$(CXX) $(LINKFLAGS) -o $@ $<
-versionstr: versionstr.o 
-	$(CXX) $(LINKFLAGS) -o $@ $<
-cpstrtochararray: cpstrtochararray.o
-	$(CXX) $(LINKFLAGS) -o $@ $<
->>>>>>> origin/master
 
 # strlval: strlvalue.o
 # 	$(CXX) $(CFLAGS) -o $@ $<

@@ -119,3 +119,11 @@ progress.marks
 count.txt
 CMakeFiles/*.*
 boost-cmake
+cmake-prj/bin/async_tcp_srv
+cmake-prj/bin/async_tcp_srv1
+cmake-prj/bin/fstream_test
+cmake-prj/bin/random_test
+cmake-prj/bin/smrtptr_test
+cmake-prj/bin/tcp_echo_clt_test
+cmake-prj/bin/tcp_echo_srv_test
+cmake-prj/bin/thread_test

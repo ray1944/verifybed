@@ -8,6 +8,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <ctime> // std::time(), returns number of seconds simce midnight on Jan 1, 1970.
+#include <random>
 
 /*
  * source code comes from:
@@ -39,6 +40,17 @@ int always_same() {
     return 0;
 }
 
+int usingc11()
+{
+    std::default_random_engine eng((std::random_device())());
+    // std::uniform_int_distribution<unsigned> idis(0, std::numeric_limits<unsigned>::max());
+    std::uniform_int_distribution<unsigned> idis(0, 65535);
+    for (auto i = 0; i < 16; i++)
+    {
+        std::cout << static_cast<unsigned>(idis(eng)) << std::endl;
+    }
+}
+
 int not_same() {
     std::srand(static_cast<unsigned int>(std::time(NULL)));
     return 0;
@@ -51,5 +63,7 @@ int main() {
         if (count % 5 == 0)
             std::cout << std::endl;
     }
+
+    usingc11();
     return 0;
 }
