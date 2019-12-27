@@ -1,0 +1,28 @@
+/*
+ * classpath 可以接受完整的 jar 的标识符，GroupId:ArtifactId:Version
+ * 所以他是最合适声明plugin 的地方
+ */
+buildscript {
+    repositories {
+        maven {
+            url "http://dlndevaldnnex01.dev.rocketsoftware.com/repository/maven-public/"
+        }
+        mavenLocal()
+    }
+    dependencies {
+        classpath 'com.rocket.ibuilder:ibuilder-plugin:0.0.3-SNAPSHOT'
+    }
+}
+
+plugins {
+    id 'maven'
+}
+
+apply plugin: 'com.rocket.ibuilder'
+
+repositories {
+    // jcenter()
+}
+
+
+
