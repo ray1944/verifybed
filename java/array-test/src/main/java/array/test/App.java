@@ -3,7 +3,7 @@
  */
 package array.test;
 
-import array.ArrayListTest;
+import array.test.ArrayListTest;
 import java.util.Arrays;
 
 public class App {
@@ -41,7 +41,7 @@ public class App {
         app.printArray();
         app.copyArray();
 
-        ArraysListTest arrtest = new ArrayListTest();
+        ArrayListTest arrtest = new ArrayListTest();
         arrtest.testArrayList();
     }
 }

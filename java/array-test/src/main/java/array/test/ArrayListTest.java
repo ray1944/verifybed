@@ -1,9 +1,9 @@
-package array;
+package array.test;
 import java.util.ArrayList;
 
 public class ArrayListTest {
     public void main(String[] args) {
-        
+        testArrayList();
     }
 
     public void testArrayList() {
